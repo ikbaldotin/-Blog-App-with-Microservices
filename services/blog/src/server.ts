@@ -1,10 +1,16 @@
 import express, { Router } from "express";
 import dotenv from "dotenv";
 import BlogRoute from "./routes/blog.js";
+import { redisClient } from "./utils/redis.js";
 dotenv.config();
 const app = express();
-const port = process.env.PORT;
 app.use(express.json());
+const port = process.env.PORT;
+
+redisClient
+  .connect()
+  .then(() => console.log("connected to redis"))
+  .catch(() => console.error);
 app.use("/api/v1", BlogRoute);
 app.listen(port, () => {
   console.log(`server is running port on${port}`);
