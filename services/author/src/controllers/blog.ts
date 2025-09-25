@@ -66,3 +66,15 @@ export const updateBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
     .status(200)
     .json({ message: "Blog updated successfully", blog: updatedBlog[0] });
 });
+
+export const deleteBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const blog = await sql`SELECT * from blog WHERE id=${req.params.id} `;
+  if (!blog.length) {
+    res.status(404).json({ message: "Blog not found" });
+    return;
+  }
+  await sql`DELETE FROM saveblogs WHERE blogid=${req.params.id}`;
+  await sql`DELETE FROM comments WHERE blogid=${req.params.id}`;
+  await sql`DELETE FROM blog WHERE id=${req.params.id} `;
+  res.status(200).json({ message: "Blog deleted successfully" });
+});
