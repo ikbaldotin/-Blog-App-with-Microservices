@@ -4,6 +4,7 @@ import { sql } from "./utils/db.js";
 import blogRoute from "./routes/blog.js";
 import { v2 as cloudinary } from "cloudinary";
 import BlogRouter from "./routes/blog.js";
+import { connectRabbitmq } from "./utils/rabbitqmq.js";
 dotenv.config();
 cloudinary.config({
   cloud_name: process.env.Cloud_Name as string,
@@ -11,6 +12,7 @@ cloudinary.config({
   api_secret: process.env.Cloud_Api_Secret as string,
 });
 const app = express();
+connectRabbitmq();
 const port = process.env.PORT;
 app.use(express.json());
 app.use("/api/v1", BlogRouter);
