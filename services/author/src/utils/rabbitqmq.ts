@@ -17,3 +17,27 @@ export const connectRabbitmq = async () => {
     console.log("failed connection to rabbitmq", error);
   }
 };
+
+export const publisToQueue = async (queueName: string, message: any) => {
+  if (!channel) {
+    console.error("Rabbitmq is not intialized");
+    return;
+  }
+  await channel.assertQueue(queueName, { durable: true });
+  channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), {
+    persistent: true,
+  });
+};
+
+export const invalidateChacheJob = async (cacheKey: string[]) => {
+  try {
+    const message = {
+      action: "invalidateCache",
+      keys: cacheKey,
+    };
+    await publisToQueue("cache-invalidation", message);
+    console.log("✅cache-invalidation job published to Rabbitmq");
+  } catch (error) {
+    console.log("failed to Published cache on Rabbitmq", error);
+  }
+};
