@@ -5,15 +5,27 @@ import TryCatch from "../utils/trycatch.js";
 import type { AuthenticatedRequest } from "../middleware/isAuth.js";
 import getBuffer from "../utils/dataUri.js";
 import { v2 as cloudinary } from "cloudinary";
+import { oauth2client } from "../utils/GoogleConfig.js";
+import axios from "axios";
 export const loginUser = TryCatch(async (req, res) => {
-  const { email, name, image } = req.body;
+  const { code } = req.body;
+  if (!code) {
+    res.status(404).json({ message: "authorization code is required" });
+    return;
+  }
+  const googleRes = await oauth2client.getToken(code);
+  oauth2client.setCredentials(googleRes.tokens);
+  const userRes = await axios.get(
+    `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token =${googleRes.tokens.access_token}`
+  );
+  const { email, name, picture } = userRes.data;
   let user = await User.findOne({ email });
 
   if (!user) {
     user = await User.create({
       email,
       name,
-      image,
+      image: picture,
     });
   }
   const token = jwt.sign({ user }, process.env.JWT_SEC as string, {
@@ -80,12 +92,10 @@ export const updatedProfilePic = TryCatch(
     const token = jwt.sign({ user }, process.env.JWT_SEC as string, {
       expiresIn: "7d",
     });
-    res
-      .status(200)
-      .json({
-        message: "user profile picture updated successfully",
-        user,
-        token,
-      });
+    res.status(200).json({
+      message: "user profile picture updated successfully",
+      user,
+      token,
+    });
   }
 );
