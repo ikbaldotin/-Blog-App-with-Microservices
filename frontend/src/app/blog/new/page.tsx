@@ -85,6 +85,59 @@ const AddBlog = () => {
       setLoading(false);
     }
   };
+  const [aiTitle, setAiTitle] = useState(false);
+  const aiTitleRespose = async () => {
+    try {
+      setAiTitle(true);
+      const { data } = await axios.post(`${author_service}/api/v1/ai/title`, {
+        text: formData.title,
+      });
+      setFormData({ ...formData, title: data as string });
+    } catch (error) {
+      toast.error("Problem while fetching form ai");
+      console.log(error);
+    } finally {
+      setAiTitle(false);
+    }
+  };
+  const [aiDescription, setAiDescription] = useState(false);
+  const aiDescriptionRespose = async () => {
+    try {
+      setAiDescription(true);
+      const { data } = await axios.post(
+        `${author_service}/api/v1/ai/description`,
+        {
+          title: formData.title,
+          description: formData.description,
+        }
+      );
+      setFormData({ ...formData, description: data as string });
+    } catch (error) {
+      toast.error("Problem while fetching form ai");
+      console.log(error);
+    } finally {
+      setAiDescription(false);
+    }
+  };
+  const [aiBlogLoading, setAiBlogLoading] = useState(false);
+  const aiBlogRespose = async () => {
+    try {
+      setAiBlogLoading(true);
+      const { data } = await axios.post(`${author_service}/api/v1/ai/blog`, {
+        blog: formData.blogcontent,
+      });
+      setContent((data as { html: string }).html);
+      setFormData({
+        ...formData,
+        blogcontent: (data as { html: string }).html,
+      });
+    } catch (error) {
+      toast.error("Problem while fetching form ai");
+      console.log(error);
+    } finally {
+      setAiBlogLoading(false);
+    }
+  };
   const config = useMemo(
     () => ({
       readonly: false, // all options from https://xdsoft.net/jodit/docs/,
@@ -107,11 +160,22 @@ const AddBlog = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="Enter blog title"
+                className={
+                  aiTitle ? "animate-pulse placeholder:opacity-60" : ""
+                }
                 required
               />
-              <Button type="button">
-                <RefreshCw />
-              </Button>
+              {formData.title === "" ? (
+                ""
+              ) : (
+                <Button
+                  type="button"
+                  onClick={aiTitleRespose}
+                  disabled={aiTitle}
+                >
+                  <RefreshCw className={aiTitle ? "animate-spin" : ""} />
+                </Button>
+              )}
             </div>
 
             <Label>Description</Label>
@@ -121,11 +185,22 @@ const AddBlog = () => {
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Enter blog description "
+                className={
+                  aiDescription ? "animate-pulse placeholder:opacity-60" : ""
+                }
                 required
               />
-              <Button type="button">
-                <RefreshCw />
-              </Button>
+              {formData.title === "" ? (
+                ""
+              ) : (
+                <Button
+                  type="button"
+                  onClick={aiDescriptionRespose}
+                  disabled={aiDescription}
+                >
+                  <RefreshCw className={aiDescription ? "animate-spin" : ""} />
+                </Button>
+              )}
             </div>
             <Label>Category</Label>
             <Select
@@ -157,8 +232,16 @@ const AddBlog = () => {
                   Paste your blog or type here.You can use rich text
                   formatting.Please add image after improving your grammer
                 </p>
-                <Button type="button" size={"sm"}>
-                  <RefreshCw size={16} />
+                <Button
+                  type="button"
+                  size={"sm"}
+                  onClick={aiBlogRespose}
+                  disabled={aiBlogLoading}
+                >
+                  <RefreshCw
+                    size={16}
+                    className={aiBlogLoading ? "animate-spin" : ""}
+                  />
                   <span className="ml-2">Fix Grammer</span>
                 </Button>
               </div>

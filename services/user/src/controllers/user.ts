@@ -13,11 +13,14 @@ export const loginUser = TryCatch(async (req, res) => {
     res.status(404).json({ message: "authorization code is required" });
     return;
   }
+  console.log("code", code);
   const googleRes = await oauth2client.getToken(code);
+  console.log("googleres", googleRes);
   oauth2client.setCredentials(googleRes.tokens);
   const userRes = await axios.get(
-    `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token =${googleRes.tokens.access_token}`
+    `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleRes.tokens.access_token}`
   );
+  console.log("userRes", userRes);
   const { email, name, picture } = userRes.data;
   let user = await User.findOne({ email });
 
