@@ -23,7 +23,7 @@ const Navber = () => {
         </div>
         <ul className="hidden md:flex justify-center items-center space-x-6 text-gray-700">
           <li>
-            <Link href={"/h"} className="hover:text-blue-500">
+            <Link href={"/blog"} className="hover:text-blue-500">
               Home
             </Link>
           </li>

@@ -18,7 +18,7 @@ import axios from "axios";
 import { author_service } from "@/context/appContext";
 import toast from "react-hot-toast";
 const JodiedReact = dynamic(() => import("jodit-react"), { ssr: false });
-const blogCategories = [
+export const blogCategories = [
   "Techonlogy",
   "Health",
   "Finance",

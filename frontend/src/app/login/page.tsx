@@ -18,7 +18,7 @@ import { redirect } from "next/navigation";
 import Loading from "@/components/loading";
 const LoginPage = () => {
   const { isAuth, setIsAuth, loading, setLoading, setUser } = useAppData();
-  if (isAuth) redirect("/");
+  if (isAuth) redirect("/blogs");
   const responseGoogle = async (authResult: any) => {
     try {
       setLoading(true);

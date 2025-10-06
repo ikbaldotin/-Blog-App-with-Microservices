@@ -14,6 +14,15 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 export const user_service = "http://localhost:5000";
 export const author_service = "http://localhost:5001";
 export const blog_service = "http://localhost:5002";
+export const blogCategories = [
+  "Techonlogy",
+  "Health",
+  "Finance",
+  "Travel",
+  "Education",
+  "Entertainment",
+  "Study",
+];
 
 export interface User {
   _id: string;
@@ -35,6 +44,12 @@ export interface Blog {
   author: string;
   create_at: string;
 }
+interface SavedBlogType {
+  id: string;
+  userid: string;
+  blogid: string;
+  create_at: string;
+}
 interface AppContextType {
   user: User | null;
   loading: boolean;
@@ -43,6 +58,14 @@ interface AppContextType {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
   LogoutUser: () => Promise<void>;
+  blogs: Blog[] | null;
+  blogLoading: boolean;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  searchQuery: string;
+  setCategory: React.Dispatch<React.SetStateAction<string>>;
+  fetchBlogs: () => Promise<void>;
+  savedBlogs: SavedBlogType[] | null;
+  getSavedBlogs: () => Promise<void>;
 }
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -70,6 +93,40 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       setLoading(false);
     }
   }
+  const [blogLoading, setBlogLoading] = useState(true);
+  const [category, setCategory] = useState("");
+  const [blogs, setBlogs] = useState<Blog[] | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  async function fetchBlogs() {
+    setBlogLoading(true);
+    try {
+      const { data } = await axios.get<Blog[]>(
+        `${blog_service}/api/v1/blog/all?serchQuery=${searchQuery}&category=${category}`
+      );
+      setBlogs(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setBlogLoading(false);
+    }
+  }
+  const [savedBlogs, setSavedBlogs] = useState<SavedBlogType[] | null>(null);
+  async function getSavedBlogs() {
+    const token = Cookies.get("token");
+    try {
+      const { data } = await axios.get<SavedBlogType[]>(
+        `${blog_service}/api/v1/blog/save/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSavedBlogs(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async function LogoutUser() {
     Cookies.remove("token");
     setUser(null);
@@ -79,7 +136,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   }
   useEffect(() => {
     fetchUser();
+    getSavedBlogs();
   }, []);
+  useEffect(() => {
+    fetchBlogs();
+  }, [searchQuery, category]);
   return (
     <AppContext.Provider
       value={{
@@ -90,6 +151,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         loading,
         setUser,
         LogoutUser,
+        blogs,
+        blogLoading,
+        searchQuery,
+        setSearchQuery,
+        setCategory,
+        fetchBlogs,
+        savedBlogs,
+        getSavedBlogs,
       }}
     >
       <GoogleOAuthProvider clientId="76698544659-q5qt0hva23cimrc100on0lqkfolrniof.apps.googleusercontent.com">
