@@ -27,11 +27,13 @@ const Navber = () => {
               Home
             </Link>
           </li>
-          <li>
-            <Link href={"/blog/saved"} className="hover:text-blue-500">
-              saved Blog
-            </Link>
-          </li>
+          {isAuth && (
+            <li>
+              <Link href={"/blog/saved"} className="hover:text-blue-500">
+                saved Blog
+              </Link>
+            </li>
+          )}
           {loading ? (
             ""
           ) : (
@@ -61,16 +63,28 @@ const Navber = () => {
               Home
             </Link>
           </li>
-          <li>
-            <Link href={"/blog/saved"} className="hover:text-blue-500">
-              saved Blog
-            </Link>
-          </li>
-          <li>
-            <Link href={"/login"} className="hover:text-blue-500">
-              <LogIn />
-            </Link>
-          </li>
+          {isAuth && (
+            <li>
+              <Link href={"/blog/saved"} className="hover:text-blue-500">
+                saved Blog
+              </Link>
+            </li>
+          )}
+          {loading ? (
+            ""
+          ) : (
+            <li>
+              {isAuth ? (
+                <Link href={"/profile"} className="hover:text-blue-500">
+                  <CircleUserRoundIcon />
+                </Link>
+              ) : (
+                <Link href={"/login"} className="hover:text-blue-500">
+                  <LogIn />
+                </Link>
+              )}
+            </li>
+          )}
         </ul>
       </div>
     </nav>
