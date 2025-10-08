@@ -12,8 +12,8 @@ import {
 } from "./ui/sidebar";
 import { Input } from "./ui/input";
 import { BoxSelect } from "lucide-react";
-import { blogCategories } from "@/app/blog/new/page";
-import { useAppData } from "@/context/appContext";
+
+import { useAppData, blogCategories } from "@/context/appContext";
 
 const SideBar = () => {
   const { searchQuery, setSearchQuery, setCategory } = useAppData();

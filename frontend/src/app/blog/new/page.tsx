@@ -15,19 +15,10 @@ import React, { useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { author_service } from "@/context/appContext";
+import { author_service, blogCategories } from "@/context/appContext";
 import toast from "react-hot-toast";
 const JodiedReact = dynamic(() => import("jodit-react"), { ssr: false });
-export const blogCategories = [
-  "Techonlogy",
-  "Health",
-  "Finance",
-  "Travel",
-  "Education",
-  "Enterainment",
-  "Study",
-  "Food",
-];
+
 const AddBlog = () => {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);

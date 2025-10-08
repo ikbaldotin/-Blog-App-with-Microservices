@@ -172,7 +172,7 @@ const BlogPage = () => {
           },
         }
       );
-      toast.success(data.message);
+      toast.success((data as { message: string }).message);
       setSaved(!saved);
       getSavedBlogs();
     } catch (error) {

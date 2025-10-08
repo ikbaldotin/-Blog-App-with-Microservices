@@ -22,14 +22,13 @@ import {
   useAppData,
 } from "@/context/appContext";
 import toast from "react-hot-toast";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 const EditBlogPage = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
-  const router = useRouter();
 
   const { fetchBlogs } = useAppData();
 
