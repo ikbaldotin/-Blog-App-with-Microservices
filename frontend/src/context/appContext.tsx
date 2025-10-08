@@ -11,9 +11,9 @@ import Cookies from "js-cookie";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-export const user_service = "http://localhost:5000";
-export const author_service = "http://localhost:5001";
-export const blog_service = "http://localhost:5002";
+export const user_service = "https://user-service2-g85d.onrender.com";
+export const author_service = "https://author-service-gfu2.onrender.com";
+export const blog_service = "https://blog-service-1-gjly.onrender.com";
 export const blogCategories = [
   "Techonlogy",
   "Health",

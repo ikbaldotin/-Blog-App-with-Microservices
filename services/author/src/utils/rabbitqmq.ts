@@ -6,10 +6,12 @@ export const connectRabbitmq = async () => {
   try {
     const connection = await amqp.connect({
       protocol: "amqp",
-      hostname: "localhost",
-      port: 5672,
-      username: "admin",
-      password: "admin123",
+      hostname: process.env.Rabitmq_Host,
+      port: process.env.Rabitmq_Port
+        ? Number(process.env.Rabitmq_Port)
+        : undefined,
+      username: process.env.Rabitmq_userName,
+      password: process.env.Rabitmq_Password,
     });
     channel = await connection.createChannel();
     console.log("✅ connected to Rabbitmq");
